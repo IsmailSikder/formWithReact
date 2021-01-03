@@ -1,12 +1,14 @@
 
 import InputForm from "../../components/InputForm.component";
 import './input-page.style.css'
-import React, { useReducer,useState } from 'react';
+import React, { useReducer } from 'react';
 import CustomButton from "../../components/custom-button.component";
-import OutputPage from "../../output-page.component";
-const InputPage =()=>{
 
-    const [userInput, setUserInput] = useReducer(
+import {connect} from 'react-redux'
+import { addUserInput } from "../../redux/input.action";
+const InputPage =({userInput})=>{
+
+    const [userInputValue, setUserInput] = useReducer(
         (state, newState) => ({...state, ...newState}),
         {
         firstName: '',
@@ -18,15 +20,17 @@ const InputPage =()=>{
         const {name,value} = evt.target
         setUserInput({[name]:value})
       }
-
+      const {firstName,lastName,phoneNumber} = userInputValue
+      const userInputObject = {firstName,lastName,phoneNumber}
       const handleSubmit =evt=>{
-          alert("Clicked")
+        evt.preventDefault()
+        userInput(userInputObject)
       }
 
-      const {firstName,lastName,phoneNumber} = userInput
-
+    
       return (
         <div>
+          <h2>Type Your Info</h2>
          <br/>
          <label>First Name: </label>
          {userInput.firstName}
@@ -51,5 +55,10 @@ const InputPage =()=>{
         
       )
 }
+const mapDispatchToProps =(dispatch)=>(
+  {
+    userInput : input=>dispatch(addUserInput(input))
+  }
+)
 
-export default InputPage
+export default connect(null, mapDispatchToProps)(InputPage)
